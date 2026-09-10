@@ -1,0 +1,32 @@
+import NextAuth from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+
+const DUMMY_EMAIL = "user@example.com";
+const DUMMY_PASSWORD = "password123";
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  providers: [
+    Credentials({
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      authorize: async (credentials) => {
+        const email = credentials?.email as string | undefined;
+        const password = credentials?.password as string | undefined;
+
+        if (email === DUMMY_EMAIL && password === DUMMY_PASSWORD) {
+          return { id: "1", name: "Demo User", email };
+        }
+
+        return null;
+      },
+    }),
+  ],
+  pages: {
+    signIn: "/login",
+  },
+  session: {
+    strategy: "jwt",
+  },
+});
