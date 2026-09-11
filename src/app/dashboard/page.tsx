@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
-import { auth, signOut } from "@/auth";
+import { auth } from "@/auth";
+import { DashboardNavbar } from "./navbar";
+import { TimesheetTable } from "./timesheet-table";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -8,24 +10,19 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-6 p-6">
-      <h1 className="text-2xl font-semibold">Dashboard</h1>
-      <p>Welcome, {session.user.name ?? session.user.email}.</p>
+  const userName = session.user.name ?? session.user.email ?? "User";
 
-      <form
-        action={async () => {
-          "use server";
-          await signOut({ redirectTo: "/login" });
-        }}
-      >
-        <button
-          type="submit"
-          className="rounded-md border border-black/10 px-3 py-2 text-sm font-medium dark:border-white/15"
-        >
-          Sign out
-        </button>
-      </form>
-    </main>
+  return (
+    <div className="flex min-h-full flex-1 flex-col bg-gray-50">
+      <DashboardNavbar userName={userName} />
+
+      <main className="flex-1 px-4 py-10 sm:px-6">
+        <TimesheetTable />
+      </main>
+
+      <footer className="py-6 text-center text-xs text-gray-400">
+        © 2024 tentwenty. All rights reserved.
+      </footer>
+    </div>
   );
 }
